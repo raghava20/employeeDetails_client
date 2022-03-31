@@ -1,0 +1,202 @@
+import React, { useState } from 'react'
+import TextField from '@mui/material/TextField';
+import { Box, Button, FormControl, FormHelperText } from '@mui/material';
+
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DatePicker from '@mui/lab/DatePicker';
+
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
+
+import * as yup from "yup"
+import { useFormik } from "formik"
+
+import API_URL from "./API_URL"
+import { useNavigate } from 'react-router-dom';
+
+export default function FormDetails() {
+
+    const navigate = useNavigate()
+    const [inputs, setInputs] = useState({
+        firstName: "",
+        lastName: "",
+        gender: "",
+        dateOfBirth: "",
+        address: "",
+        email: "",
+        contactNumber: "",
+        maritalStatus: "",
+        jobTitle: "",
+        department: "",
+        bankDetails: ""
+    })
+    const [currentStep, setCurrentStep] = useState(0)
+
+    const makeRequest = async (data) => {
+        const response = await API_URL.post('/employee-details', data)
+        if (response.data.message === "Posted Successfully") {
+            return navigate('/employee-details')
+        }
+
+    }
+
+    const handleNextStep = (newInput, final = false) => {
+        setInputs(prev => ({ ...prev, ...newInput }))
+
+        if (final) {
+            makeRequest(newInput)
+            return
+        }
+        setCurrentStep(prev => prev + 1)
+    }
+
+    const handlePreviousStep = (newInput) => {
+        setInputs(prev => ({ ...prev, ...newInput }))
+
+        setCurrentStep(prev => prev - 1)
+    }
+
+    const steps = [
+        <StepOne next={handleNextStep} inputs={inputs} />,
+        <StepTwo next={handleNextStep} previous={handlePreviousStep} inputs={inputs} />,
+        <StepThree next={handleNextStep} previous={handlePreviousStep} inputs={inputs} />
+    ]
+
+    return (
+        <Box sx={{ width: "60%", m: "auto" }}>
+            {steps[currentStep]}
+        </Box>
+    )
+}
+
+
+const StepOne = ({ inputs, next }) => {
+
+    const onSubmit = (values) => {
+        next(values)
+    }
+
+    const stepOneValidationSchema = yup.object({
+        firstName: yup.string().required().label('First Name'),
+        lastName: yup.string().required().label('Last Name'),
+        gender: yup.string().required().label('Gender'),
+        dateOfBirth: yup.string().required().label('Date of Birth')
+    })
+
+    const formik = useFormik({
+        initialValues: inputs,
+        validationSchema: stepOneValidationSchema,
+        onSubmit
+    })
+
+
+    return (
+        <form onSubmit={formik.handleSubmit} style={{ marginTop: 60, display: 'flex', flexDirection: 'column', gap: 15 }}>
+            <TextField type="text" label="First Name" name="firstName" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.firstName} variant="outlined" error={formik.touched.firstName && formik.errors.firstName ? true : false} helperText={formik.touched.firstName && formik.errors.firstName ? formik.errors.firstName : ""} />
+            <TextField type="text" label="Last Name" name="lastName" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.lastName} variant="outlined" error={formik.touched.lastName && formik.errors.lastName ? true : false} helperText={formik.touched.lastName && formik.errors.lastName ? formik.errors.lastName : ""} />
+            <FormControl error={formik.touched.gender && formik.errors.gender ? true : false} >
+                <FormLabel >Gender</FormLabel>
+                <RadioGroup row name="gender" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.gender} >
+                    <FormControlLabel value="female" control={<Radio />} label="Female" />
+                    <FormControlLabel value="male" control={<Radio />} label="Male" />
+                </RadioGroup>
+                <FormHelperText>{formik.touched.gender && formik.errors.gender ? formik.errors.gender : ""}</FormHelperText>
+
+            </FormControl>
+
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                    label="D.O.B"
+                    name="dateOfBirth"
+                    onChange={val => formik.setFieldValue("dateOfBirth", val)}
+                    value={formik.values.dateOfBirth}
+                    renderInput={(params) => <TextField {...params}
+                        helperText={formik.touched.dateOfBirth && formik.errors.dateOfBirth ? formik.errors.dateOfBirth : ""}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.dateOfBirth && formik.errors.dateOfBirth ? true : false} />}
+                />
+            </LocalizationProvider>
+
+            <div style={{ textAlign: 'end' }}><Button type="submit">Next</Button></div>
+        </form>
+    )
+}
+
+
+const StepTwo = ({ inputs, next, previous }) => {
+
+    const onSubmit = (values) => {
+        next(values)
+    }
+
+
+    const stepTwoValidationSchema = yup.object({
+        address: yup.string().required().label('Address'),
+        email: yup.string().required().email().label('Email'),
+        contactNumber: yup.string().required().label("Contact No."),
+        maritalStatus: yup.string().required().label('Marital Status')
+    })
+
+    const formik = useFormik({
+        initialValues: inputs,
+        validationSchema: stepTwoValidationSchema,
+        onSubmit
+    })
+
+    return (
+        <form onSubmit={formik.handleSubmit} style={{ marginTop: 60, display: 'flex', flexDirection: 'column', gap: 15 }}>
+            <TextField label="Address" variant="outlined" name="address" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.address} error={formik.touched.address && formik.errors.address ? true : false} helperText={formik.touched.address && formik.errors.address ? formik.errors.address : ""} />
+            <TextField label="Email" type="email" variant="outlined" name="email" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.email} error={formik.touched.email && formik.errors.email ? true : false} helperText={formik.touched.email && formik.errors.email ? formik.errors.email : ""} />
+            <TextField label="Contact No." type="tel" variant="outlined" name="contactNumber" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.contactNumber} error={formik.touched.contactNumber && formik.errors.contactNumber ? true : false} helperText={formik.touched.contactNumber && formik.errors.contactNumber ? formik.errors.contactNumber : ""} />
+            <FormControl error={formik.touched.maritalStatus && formik.errors.maritalStatus ? true : false}>
+                <FormLabel>Marital Status</FormLabel>
+                <RadioGroup row name="maritalStatus" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.maritalStatus}  >
+                    <FormControlLabel value="married" control={<Radio />} label="Married" />
+                    <FormControlLabel value="unMarried" control={<Radio />} label="Unmarried" />
+                </RadioGroup>
+                <FormHelperText>{formik.touched.maritalStatus && formik.errors.maritalStatus ? formik.errors.maritalStatus : ""}</FormHelperText>
+            </FormControl>
+            <div style={{ display: 'flex', justifyContent: "space-between" }}>
+                <Button type="button" onClick={() => previous(formik.values)}>previous</Button>
+                <Button type="submit">Next</Button>
+            </div>
+        </form>
+    )
+}
+
+const StepThree = ({ inputs, next, previous }) => {
+
+    const onSubmit = (values) => {
+        next(values, true)
+    }
+
+
+    const stepThreeValidationSchema = yup.object({
+        jobTitle: yup.string().required().label("Job Title"),
+        department: yup.string().required().label('Department'),
+        bankDetails: yup.string().required().label("Bank Details")
+    })
+
+
+    const formik = useFormik({
+        initialValues: inputs,
+        validationSchema: stepThreeValidationSchema,
+        onSubmit
+    })
+
+
+    return (
+        <form onSubmit={formik.handleSubmit} style={{ marginTop: 60, display: 'flex', flexDirection: 'column', gap: 15 }}>
+            <TextField type="text" label="Job Title" variant="outlined" name="jobTitle" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.jobTitle} error={formik.touched.jobTitle && formik.errors.jobTitle ? true : false} helperText={formik.touched.jobTitle && formik.errors.jobTitle ? formik.errors.jobTitle : ""} />
+            <TextField type="text" label="Department" variant="outlined" name="department" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.department} error={formik.touched.department && formik.errors.department ? true : false} helperText={formik.touched.department && formik.errors.department ? formik.errors.department : ""} />
+            <TextField type="text" label="Bank Details" helperText={formik.touched.bankDetails && formik.errors.bankDetails ? formik.errors.bankDetails : 'Account no,Branch,IFSC Code'} variant="outlined" name="bankDetails" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.bankDetails} error={formik.touched.bankDetails && formik.errors.bankDetails ? true : false} />
+            <div style={{ display: 'flex', justifyContent: "space-between" }}>
+                <Button type="button" onClick={() => previous(formik.values)}>previous</Button>
+                <Button type="submit">Submit</Button>
+            </div>
+        </form>
+    )
+}

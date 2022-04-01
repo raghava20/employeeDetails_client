@@ -1,4 +1,4 @@
-import { Button, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react'
@@ -8,6 +8,8 @@ export default function EmployeeDetails() {
     const [rows, setRows] = useState([])
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
+    const [getData, setGetData] = useState([])
+    const [dataHolder, setDataHolder] = useState([])
 
     useEffect(() => {
         getDataFromDb()
@@ -15,8 +17,11 @@ export default function EmployeeDetails() {
 
     const getDataFromDb = async () => {
         const response = await API_URL.get('/employee-details')
+        const details = await API_URL.get('/employee-details/departments/details')
         console.log(response.data.response)
         setRows(response.data.response)
+        setDataHolder(response.data.response)
+        setGetData(details.data.response)
     }
 
     const handleChangePage = (event, newPage) => {
@@ -43,9 +48,30 @@ export default function EmployeeDetails() {
         { id: "Options", value: "nodat34f!a" }
     ];
 
+    const handleDataProvider = (e) => {
+        console.log(e.target.innerText)
+        // getDataFromDb()
+        if (e.target.innerText !== "All") {
+            const value = dataHolder.filter(row => row.department === e.target.innerText);
+            return setRows(value);
+        }
+        getDataFromDb()
 
+    }
     return (
         <Paper sx={{ width: '100%' }}>
+            <FormControl sx={{ width: '13%', mt: 2 }}>
+                <InputLabel id="demo-simple-select-label">Department</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Department"
+                    name="department"
+                >
+                    <MenuItem value="All" onClick={(e) => handleDataProvider(e)}>All</MenuItem>
+                    {getData.map(data => <MenuItem key={data.department} value={data.department} onClick={(e) => handleDataProvider(e)}>{data.department}</MenuItem>)}
+                </Select>
+            </FormControl>
             <TableContainer sx={{ maxHeight: 440 }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>

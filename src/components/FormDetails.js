@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TextField from '@mui/material/TextField';
-import { Box, Button, FormControl, FormHelperText } from '@mui/material';
+import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Modal, Select } from '@mui/material';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -16,6 +16,8 @@ import { useFormik } from "formik"
 
 import API_URL from "./API_URL"
 import { useNavigate } from 'react-router-dom';
+import MuiAlert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 export default function FormDetails() {
 
@@ -167,7 +169,68 @@ const StepTwo = ({ inputs, next, previous }) => {
     )
 }
 
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 const StepThree = ({ inputs, next, previous }) => {
+
+    const [getData, setGetData] = useState([])
+    const [modal, setModal] = useState(false)
+    const [addValue, setAddValue] = useState("")
+    const [open, setOpen] = useState(false);
+    const [serverError, setServerError] = useState("")
+
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+
+    useEffect(() => {
+        getDataFromDb()
+    }, [])
+
+    const getDataFromDb = async () => {
+        try {
+            const response = await API_URL.get('/employee-details/departments/details')
+            setGetData(response.data.response)
+            console.log(response, "datafrom the db")
+            console.log(getData, "datafrom the db")
+        }
+        catch (error) {
+            console.log(error.response)
+        }
+    }
+
+    const handleCreateDepartment = async () => {
+        const userData = {
+            department: addValue
+        }
+        try {
+            const response = await API_URL.post('/employee-details/departments', userData)
+            setServerError(response.data.message)
+            handleClick()
+            setModal(!modal)
+            setAddValue("")
+            console.log(response.data.message)
+            getDataFromDb()
+        }
+        catch (error) {
+            setServerError(error.response.data.message)
+            console.log(error.response.data.message)
+            handleClick()
+        }
+
+    }
 
     const onSubmit = (values) => {
         next(values, true)
@@ -187,11 +250,57 @@ const StepThree = ({ inputs, next, previous }) => {
         onSubmit
     })
 
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'white',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
+
 
     return (
         <form onSubmit={formik.handleSubmit} style={{ marginTop: 60, display: 'flex', flexDirection: 'column', gap: 15 }}>
             <TextField type="text" label="Job Title" variant="outlined" name="jobTitle" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.jobTitle} error={formik.touched.jobTitle && formik.errors.jobTitle ? true : false} helperText={formik.touched.jobTitle && formik.errors.jobTitle ? formik.errors.jobTitle : ""} />
-            <TextField type="text" label="Department" variant="outlined" name="department" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.department} error={formik.touched.department && formik.errors.department ? true : false} helperText={formik.touched.department && formik.errors.department ? formik.errors.department : ""} />
+
+            <FormControl fullWidth error={formik.touched.department && formik.errors.department ? true : false}>
+                <InputLabel id="demo-simple-select-label">Department</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Department"
+                    name="department"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.department}
+                >
+                    {console.log(formik.values.department, "formik value")}
+                    {getData.map(data => <MenuItem value={data.department}>{data.department}</MenuItem>)}
+                    <Button onClick={() => setModal(!modal)}>Add</Button>
+                </Select>
+                <FormHelperText>{formik.touched.department && formik.errors.department ? formik.errors.department : ""}</FormHelperText>
+            </FormControl>
+
+            <Modal
+                open={modal}
+                onClose={() => setModal(!modal)}
+            >
+                <Box sx={style}>
+                    <TextField value={addValue} onChange={(e) => setAddValue(e.target.value)} />
+                    <Button onClick={handleCreateDepartment}>Submit</Button>
+                </Box>
+            </Modal>
+
+            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity={serverError === "Added department" ? "success" : "error"} sx={{ width: '100%' }}>
+                    {serverError}
+                </Alert>
+            </Snackbar>
+
             <TextField type="text" label="Bank Details" helperText={formik.touched.bankDetails && formik.errors.bankDetails ? formik.errors.bankDetails : 'Account no,Branch,IFSC Code'} variant="outlined" name="bankDetails" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.bankDetails} error={formik.touched.bankDetails && formik.errors.bankDetails ? true : false} />
             <div style={{ display: 'flex', justifyContent: "space-between" }}>
                 <Button type="button" onClick={() => previous(formik.values)}>previous</Button>

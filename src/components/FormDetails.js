@@ -125,7 +125,7 @@ const StepOne = ({ inputs, next }) => {
                 />
             </LocalizationProvider>
 
-            <div style={{ textAlign: 'end' }}><Button type="submit">Next</Button></div>
+            <div style={{ textAlign: 'end' }}><Button variant="contained" color="secondary" type="submit">Next</Button></div>
         </form>
     )
 }
@@ -194,8 +194,8 @@ const StepTwo = ({ inputs, next, previous }) => {
                 <FormHelperText>{formik.touched.maritalStatus && formik.errors.maritalStatus ? formik.errors.maritalStatus : ""}</FormHelperText>
             </FormControl>
             <div style={{ display: 'flex', justifyContent: "space-between" }}>
-                <Button type="button" onClick={() => previous(formik.values)}>previous</Button>
-                <Button type="submit">Next</Button>
+                <Button variant="contained" color="primary" type="button" onClick={() => previous(formik.values)}>previous</Button>
+                <Button variant="contained" color="secondary" type="submit">Next</Button>
             </div>
         </form>
     )
@@ -335,8 +335,8 @@ const StepThree = ({ inputs, next, previous }) => {
 
             <TextField type="text" label="Bank Details" helperText={formik.touched.bankDetails && formik.errors.bankDetails ? formik.errors.bankDetails : 'Account no,Branch,IFSC Code'} variant="outlined" name="bankDetails" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.bankDetails} error={formik.touched.bankDetails && formik.errors.bankDetails ? true : false} />
             <div style={{ display: 'flex', justifyContent: "space-between" }}>
-                <Button type="button" onClick={() => previous(formik.values)}>previous</Button>
-                <Button type="submit">Submit</Button>
+                <Button variant="contained" color="primary" type="button" onClick={() => previous(formik.values)}>previous</Button>
+                <Button variant="contained" color="secondary" type="submit">Submit</Button>
             </div>
         </form>
     )

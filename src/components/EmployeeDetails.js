@@ -1,8 +1,10 @@
-import { Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
+import { Button, FormControl, IconButton, InputLabel, MenuItem, Modal, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react'
 import API_URL from './API_URL';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function EmployeeDetails() {
     const [rows, setRows] = useState([])
@@ -59,7 +61,7 @@ export default function EmployeeDetails() {
 
     }
     return (
-        <Paper sx={{ width: '100%' }}>
+        <Paper sx={{ width: '100%', p: 2 }}>
             <FormControl sx={{ width: '13%', mt: 2 }}>
                 <InputLabel id="demo-simple-select-label">Department</InputLabel>
                 <Select
@@ -72,14 +74,15 @@ export default function EmployeeDetails() {
                     {getData.map(data => <MenuItem key={data.department} value={data.department} onClick={(e) => handleDataProvider(e)}>{data.department}</MenuItem>)}
                 </Select>
             </FormControl>
-            <TableContainer sx={{ maxHeight: 440 }}>
+            <TableContainer sx={{ maxHeight: 440, mt: 3 }}>
                 <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
+                    <TableHead >
+                        <TableRow >
                             {columns.map((column) => (
                                 <TableCell
                                     key={column}
-                                    style={{ minWidth: column.minWidth }}
+                                    style={{ minWidth: column.minWidth, backgroundColor: 'black', color: 'white' }}
+
                                 >
                                     {column.id}
                                 </TableCell>
@@ -180,12 +183,13 @@ const Modals = ({ value, row, getDataFromDb, columns }) => {
             </>
             :
             <>
-                <Button onClick={() => {
+                <IconButton onClick={() => {
                     setOpen(!open)
                     handleEdit(row._id)
-                }
-                }>Edit</Button>
-                <Button onClick={() => handleDelete(row._id)}>Delete</Button>
+                }}
+                    style={{ color: "#2a9f01" }}
+                ><EditIcon /></IconButton>
+                <IconButton onClick={() => handleDelete(row._id)} style={{ color: "#c41010" }}><DeleteIcon /></IconButton>
             </>}
 
 

@@ -20,7 +20,7 @@ import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 
 import PhoneInput from "react-phone-input-2"
-import 'react-phone-input-2/lib/style.css'
+import 'react-phone-input-2/lib/material.css'
 
 export default function FormDetails() {
 
@@ -141,7 +141,7 @@ const StepTwo = ({ inputs, next, previous }) => {
     const stepTwoValidationSchema = yup.object({
         address: yup.string().required().label('Address'),
         email: yup.string().required().email().label('Email'),
-        contactNumber: yup.string().required().label("Contact No."),
+        contactNumber: yup.string().required().label("Phone"),
         maritalStatus: yup.string().required().label('Marital Status')
     })
 
@@ -155,9 +155,8 @@ const StepTwo = ({ inputs, next, previous }) => {
         <form onSubmit={formik.handleSubmit} style={{ marginTop: 60, display: 'flex', flexDirection: 'column', gap: 15 }}>
             <TextField label="Address" variant="outlined" name="address" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.address} error={formik.touched.address && formik.errors.address ? true : false} helperText={formik.touched.address && formik.errors.address ? formik.errors.address : ""} />
             <TextField label="Email" type="email" variant="outlined" name="email" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.email} error={formik.touched.email && formik.errors.email ? true : false} helperText={formik.touched.email && formik.errors.email ? formik.errors.email : ""} />
-            <TextField
+            {/* <TextField
                 label="Contact No."
-                // country={"in"}
                 variant="outlined"
                 name="contactNumber"
                 onBlur={formik.handleBlur}
@@ -165,7 +164,26 @@ const StepTwo = ({ inputs, next, previous }) => {
                 value={formik.values.contactNumber}
                 error={formik.touched.contactNumber && formik.errors.contactNumber ? true : false}
                 helperText={formik.touched.contactNumber && formik.errors.contactNumber ? formik.errors.contactNumber : ""}
+
+            /> */}
+            <PhoneInput
+                label="Contact No."
+                country={"in"}
+                enableAreaCodes={true}
+                autoFormat={true}
+                value={formik.values.contactNumber}
+                inputStyle={{ width: '100%' }}
+                inputProps={{
+                    name: 'contactNumber',
+                    label: "Contact No.",
+                    type: 'tel',
+                    onBlur: formik.handleBlur,
+                    onChange: formik.handleChange,
+                    error: formik.touched.contactNumber && formik.errors.contactNumber ? true : false,
+                    helperText: formik.touched.contactNumber && formik.errors.contactNumber ? formik.errors.contactNumber : ""
+                }}
             />
+            <FormHelperText sx={{ color: "error.main" }}>{formik.touched.contactNumber && formik.errors.contactNumber ? formik.errors.contactNumber : ""}</FormHelperText>
 
             <FormControl error={formik.touched.maritalStatus && formik.errors.maritalStatus ? true : false}>
                 <FormLabel>Marital Status</FormLabel>
@@ -292,7 +310,7 @@ const StepThree = ({ inputs, next, previous }) => {
                     onChange={formik.handleChange}
                     value={formik.values.department}
                 >
-                    {console.log(formik.values.department, "formik value")}
+
                     {getData.map(data => <MenuItem value={data.department}>{data.department}</MenuItem>)}
                     <Button onClick={() => setModal(!modal)}>Add</Button>
                 </Select>

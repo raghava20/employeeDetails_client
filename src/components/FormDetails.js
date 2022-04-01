@@ -19,6 +19,9 @@ import { useNavigate } from 'react-router-dom';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 
+import PhoneInput from "react-phone-input-2"
+import 'react-phone-input-2/lib/style.css'
+
 export default function FormDetails() {
 
     const navigate = useNavigate()
@@ -152,7 +155,18 @@ const StepTwo = ({ inputs, next, previous }) => {
         <form onSubmit={formik.handleSubmit} style={{ marginTop: 60, display: 'flex', flexDirection: 'column', gap: 15 }}>
             <TextField label="Address" variant="outlined" name="address" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.address} error={formik.touched.address && formik.errors.address ? true : false} helperText={formik.touched.address && formik.errors.address ? formik.errors.address : ""} />
             <TextField label="Email" type="email" variant="outlined" name="email" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.email} error={formik.touched.email && formik.errors.email ? true : false} helperText={formik.touched.email && formik.errors.email ? formik.errors.email : ""} />
-            <TextField label="Contact No." type="tel" variant="outlined" name="contactNumber" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.contactNumber} error={formik.touched.contactNumber && formik.errors.contactNumber ? true : false} helperText={formik.touched.contactNumber && formik.errors.contactNumber ? formik.errors.contactNumber : ""} />
+            <TextField
+                label="Contact No."
+                // country={"in"}
+                variant="outlined"
+                name="contactNumber"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values.contactNumber}
+                error={formik.touched.contactNumber && formik.errors.contactNumber ? true : false}
+                helperText={formik.touched.contactNumber && formik.errors.contactNumber ? formik.errors.contactNumber : ""}
+            />
+
             <FormControl error={formik.touched.maritalStatus && formik.errors.maritalStatus ? true : false}>
                 <FormLabel>Marital Status</FormLabel>
                 <RadioGroup row name="maritalStatus" onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.maritalStatus}  >

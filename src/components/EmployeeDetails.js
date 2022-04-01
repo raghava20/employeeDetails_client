@@ -169,6 +169,9 @@ const Modals = ({ value, row, getDataFromDb, columns }) => {
         border: '2px solid #000',
         boxShadow: 24,
         p: 4,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1
     };
     return (
         <> {value !== undefined ?
@@ -192,18 +195,25 @@ const Modals = ({ value, row, getDataFromDb, columns }) => {
                     open={open}
                     onClose={handleClose}
                 >
-                    <Box sx={style}>
-                        <TextField name="firstName" value={inputs.firstName} onChange={handleChange} />
-                        <TextField name="lastName" value={inputs.lastName} onChange={handleChange} />
-                        <TextField name="gender" value={inputs.gender} onChange={handleChange} />
-                        <TextField name="dateOfBirth" value={inputs.dateOfBirth} onChange={handleChange} />
-                        <TextField name="address" value={inputs.address} onChange={handleChange} />
-                        <TextField name="email" value={inputs.email} onChange={handleChange} />
-                        <TextField name="contactNumber" value={inputs.contactNumber} onChange={handleChange} />
-                        <TextField name="maritalStatus" value={inputs.maritalStatus} onChange={handleChange} />
-                        <TextField name="jobTitle" value={inputs.jobTitle} onChange={handleChange} />
-                        <TextField name="department" value={inputs.department} onChange={handleChange} />
-                        <TextField name="bankDetails" value={inputs.bankDetails} onChange={handleChange} />
+                    <Box sx={style} >
+                        <Typography sx={{ display: 'flex', gap: 2 }}>
+                            <TextField label="First Name" name="firstName" value={inputs.firstName} onChange={handleChange} />
+                            <TextField label="Last Name" name="lastName" value={inputs.lastName} onChange={handleChange} />
+                        </Typography>
+                        <Typography sx={{ display: 'flex', gap: 2 }}>
+                            <TextField label="Gender" name="gender" value={inputs.gender} onChange={handleChange} />
+                            <TextField label="D.O.B" name="dateOfBirth" value={inputs.dateOfBirth} onChange={handleChange} />
+                        </Typography>
+                        <TextField label="Address" name="address" value={inputs.address} onChange={handleChange} />
+                        <TextField label="Email" name="email" value={inputs.email} onChange={handleChange} />
+                        <Typography sx={{ display: 'flex', gap: 2 }}>
+                            <TextField label="Contact No." name="contactNumber" value={inputs.contactNumber} onChange={handleChange} />
+                            <TextField label="Marital Status" name="maritalStatus" value={inputs.maritalStatus} onChange={handleChange} />
+                        </Typography>
+
+                        <TextField label="Job Title" name="jobTitle" value={inputs.jobTitle} onChange={handleChange} />
+                        <TextField label="Department" name="department" value={inputs.department} onChange={handleChange} />
+                        <TextField label="Bank Details " name="bankDetails" value={inputs.bankDetails} onChange={handleChange} />
 
                         <Button onClick={() => handleUpdate(inputs._id)}>Submit</Button>
                     </Box>

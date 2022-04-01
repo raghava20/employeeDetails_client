@@ -6,6 +6,7 @@ import { useFormik } from "formik"
 import * as yup from "yup"
 import API_URL from './API_URL'
 import { Link, useNavigate } from 'react-router-dom';
+import Google from './Google';
 
 export default function Login() {
     const navigate = useNavigate()
@@ -109,12 +110,16 @@ export default function Login() {
                     >
                         Login
                     </Button>
+                    <Typography sx={{ width: '100%', display: "flex", justifyContent: "center" }}  >
+                        <Google />
+                    </Typography>
+
                     <br />
-                    <small >
-                        Don't have an account ? sign up <Link to="/signup">here</Link>
-                    </small>
                 </form>
 
+                <small >
+                    Don't have an account ? sign up <Link to="/signup">here</Link>
+                </small>
                 <small style={{ display: "flex", justifyContent: 'center', alignItems: 'center', marginTop: "40px", color: "primary", flexWrap: "wrap", flexDirection: "column" }}>
                     Demo Credentials:&nbsp;
                     <div style={{ display: "flex", justifyContent: 'center', alignItems: 'center', gap: "3px", flexDirection: "row" }}>

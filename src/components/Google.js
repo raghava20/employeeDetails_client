@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material';
 import React from 'react'
 import { GoogleLogin } from 'react-google-login';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +27,6 @@ export default function Google() {
             onSuccess={responseSuccessGoogle}
             onFailure={responseErrorGoogle}
             cookiePolicy={'single_host_origin'}
-
         />
     )
 }

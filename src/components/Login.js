@@ -7,6 +7,7 @@ import * as yup from "yup"
 import API_URL from './API_URL'
 import { Link, useNavigate } from 'react-router-dom';
 import Google from './Google';
+import Facebook from './Facebook';
 
 export default function Login() {
     const navigate = useNavigate()
@@ -110,8 +111,9 @@ export default function Login() {
                     >
                         Login
                     </Button>
-                    <Typography sx={{ width: '100%', display: "flex", justifyContent: "center" }}  >
+                    <Typography sx={{ width: '100%', display: "flex", justifyContent: "center", alignItems: "center", gap: "1rem" }}  >
                         <Google />
+                        <Facebook />
                     </Typography>
 
                     <br />
